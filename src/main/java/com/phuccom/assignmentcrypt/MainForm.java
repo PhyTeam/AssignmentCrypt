@@ -5,12 +5,28 @@
  */
 package com.phuccom.assignmentcrypt;
 
+import com.phuccom.assignmentcrypt.utils.FileEncryption;
+import com.sun.corba.se.impl.activation.ProcessMonitorThread;
+import java.io.File;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.stage.FileChooser;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.ProgressMonitor;
+
 /**
  *
  * @author bbphuc
  */
 public class MainForm extends javax.swing.JFrame {
 
+    ProgressDialog progressDialog;
     /**
      * Creates new form MainForm
      */
@@ -28,16 +44,64 @@ public class MainForm extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenu1 = new javax.swing.JMenu();
-        jButton1 = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel1 = new javax.swing.JLabel();
+        txt_InputFilePath = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        mBtnOpenFile = new javax.swing.JButton();
+        mBtnStart = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txt_OutputFilePath = new javax.swing.JTextField();
+        mBtnSaveFile = new javax.swing.JButton();
+        btnEncryptOrDecrypt = new javax.swing.JToggleButton();
 
         jMenu1.setText("jMenu1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DES" }));
+
+        jLabel1.setText("Algorithm");
+
+        txt_InputFilePath.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                txt_InputFilePathActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("File path");
+
+        mBtnOpenFile.setText("Open");
+        mBtnOpenFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mBtnOpenFileActionPerformed(evt);
+            }
+        });
+
+        mBtnStart.setText("Start");
+        mBtnStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mBtnStartActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        jLabel3.setText("Secret files");
+
+        jLabel4.setText("Output path");
+
+        mBtnSaveFile.setText("Save");
+        mBtnSaveFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mBtnSaveFileActionPerformed(evt);
+            }
+        });
+
+        btnEncryptOrDecrypt.setText("Encrypt");
+        btnEncryptOrDecrypt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEncryptOrDecryptActionPerformed(evt);
             }
         });
 
@@ -46,24 +110,153 @@ public class MainForm extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(428, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel4)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(btnEncryptOrDecrypt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txt_OutputFilePath, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                            .addComponent(mBtnStart, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txt_InputFilePath, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(mBtnOpenFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(mBtnSaveFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(215, Short.MAX_VALUE)
-                .addComponent(jButton1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnEncryptOrDecrypt, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_InputFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mBtnOpenFile))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addGap(1, 1, 1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_OutputFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mBtnSaveFile))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(mBtnStart)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void mBtnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mBtnOpenFileActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        JFileChooser fc = new JFileChooser();
+        int result = fc.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION){
+            // Selected a file
+            File file = fc.getSelectedFile();
+            txt_InputFilePath.setText(file.getAbsolutePath());
+            if (txt_OutputFilePath.getText().length() <= 0)
+                txt_OutputFilePath.setText(file.getAbsolutePath() + ".decypted");
+            // Print file information
+            System.out.println("Path : " + file.getAbsolutePath());
+            System.out.println("File size: " + file.length());
+            System.out.println("File last modified: " + new Date(file.lastModified()));
+        }
+    }//GEN-LAST:event_mBtnOpenFileActionPerformed
+
+    private void txt_InputFilePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_InputFilePathActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_InputFilePathActionPerformed
+
+    private void mBtnSaveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mBtnSaveFileActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fc = new JFileChooser();
+        int result = fc.showSaveDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION){
+            // Selected a file
+            File file = fc.getSelectedFile();
+            txt_OutputFilePath.setText(file.getAbsolutePath());
+        }
+    }//GEN-LAST:event_mBtnSaveFileActionPerformed
+
+    private void mBtnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mBtnStartActionPerformed
+        // TODO add your handling code here:
+        progressDialog = new ProgressDialog();
+        final JFrame frame = new JFrame();
+        frame.add(progressDialog);
+        frame.setSize(400, 200);
+        frame.setVisible(true);
+        FileEncryption fe = new FileEncryption(new UpdateStatusCallback() {
+            @Override
+            public void update(float p) {
+                System.out.println(p);
+                progressDialog.setProgressStatus((int)(p * 100));
+            }
+        });
+        String i = txt_InputFilePath.getText();
+        String o = txt_OutputFilePath.getText();
+        File in = new File(i);
+        File out = new File(o);
+        
+            if (btnEncryptOrDecrypt.isSelected()){
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            fe.decrypt(in, out);
+                            JOptionPane.showMessageDialog(null, "Decription complete", "Title", JOptionPane.INFORMATION_MESSAGE);
+                            frame.setVisible(false);
+                            frame.dispose();
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (InvalidKeyException ex) {
+                            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+                t.start();
+            } else {
+                
+                Thread t = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            fe.encrypt(in, out);
+                            JOptionPane.showMessageDialog(null, "Encryption complete", "Title", JOptionPane.INFORMATION_MESSAGE);
+                            frame.setVisible(false);
+                            frame.dispose();
+                        } catch (IOException ex) {
+                            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (InvalidKeyException ex) {
+                            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+                t.start();
+            }
+        
+    }//GEN-LAST:event_mBtnStartActionPerformed
+
+    private void btnEncryptOrDecryptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncryptOrDecryptActionPerformed
+        // TODO add your handling code here:
+        if (!btnEncryptOrDecrypt.isSelected()){
+            btnEncryptOrDecrypt.setText("Encrypt");
+        } else {
+            btnEncryptOrDecrypt.setText("Decrypt");
+        }
+    }//GEN-LAST:event_btnEncryptOrDecryptActionPerformed
 
     /**
      * @param args the command line arguments
@@ -101,7 +294,17 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JToggleButton btnEncryptOrDecrypt;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JButton mBtnOpenFile;
+    private javax.swing.JButton mBtnSaveFile;
+    private javax.swing.JButton mBtnStart;
+    private javax.swing.JTextField txt_InputFilePath;
+    private javax.swing.JTextField txt_OutputFilePath;
     // End of variables declaration//GEN-END:variables
 }
